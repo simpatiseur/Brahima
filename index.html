@@ -1,0 +1,391 @@
+import { useState } from "react";
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chambre de Métiers de Dabou</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#222}
+header{background:linear-gradient(135deg,#1a3c5e,#2d6a4f);color:#fff;padding:18px 20px;text-align:center}
+header h1{font-size:1.3rem;letter-spacing:.5px}
+header p{font-size:.82rem;opacity:.85;margin-top:4px}
+.stats{display:flex;gap:10px;justify-content:center;padding:14px 16px;background:#fff;border-bottom:1px solid #ddd;flex-wrap:wrap}
+.stat{text-align:center;background:#f8f9fa;border-radius:10px;padding:10px 18px;min-width:90px}
+.stat .n{font-size:1.6rem;font-weight:700;color:#1a3c5e}
+.stat .l{font-size:.72rem;color:#666}
+.toolbar{display:flex;gap:8px;padding:12px 14px;background:#fff;border-bottom:1px solid #ddd;flex-wrap:wrap;align-items:center}
+.toolbar input{flex:1;min-width:160px;padding:8px 12px;border:1px solid #ccc;border-radius:8px;font-size:.88rem}
+.toolbar select{padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:.88rem;background:#fff}
+.btn{padding:8px 14px;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.btn-green{background:#2d6a4f;color:#fff}
+.btn-blue{background:#1a3c5e;color:#fff}
+.btn-red{background:#c0392b;color:#fff}
+.btn-call{background:#27ae60;color:#fff;padding:6px 12px;font-size:.8rem;border-radius:6px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.table-wrap{overflow-x:auto;padding:12px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:.8rem}
+th{background:#1a3c5e;color:#fff;padding:10px 8px;text-align:left;white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid #eee;vertical-align:middle;white-space:nowrap}
+tr:hover td{background:#f0f7f4}
+.badge{display:inline-block;padding:3px 8px;border-radius:12px;font-size:.72rem;font-weight:600}
+.badge-actif{background:#d4edda;color:#155724}
+.badge-inactif{background:#f8d7da;color:#721c24}
+.no-photo{width:40px;height:40px;border-radius:50%;background:#ddd;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto}
+.photo-cell img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #2d6a4f;display:block;margin:0 auto}
+.sig-cell img{height:32px;border:1px solid #ccc;border-radius:4px}
+.empty-row td{text-align:center;color:#aaa;padding:30px;font-style:italic}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;overflow-y:auto}
+.modal-bg.open{display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:600px;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.modal-header{background:linear-gradient(135deg,#1a3c5e,#2d6a4f);color:#fff;padding:16px 20px;border-radius:14px 14px 0 0;display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-size:1rem}
+.close-btn{background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer}
+.modal-body{padding:18px 20px;display:flex;flex-direction:column;gap:12px;max-height:75vh;overflow-y:auto}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:.78rem;font-weight:600;color:#444}
+.form-group input,.form-group select{padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:.85rem;background:#fafafa}
+.form-group input:focus,.form-group select:focus{outline:2px solid #2d6a4f;border-color:#2d6a4f;background:#fff}
+.photo-upload{border:2px dashed #ccc;border-radius:10px;padding:16px;text-align:center;cursor:pointer;color:#888;font-size:.85rem}
+canvas{border:1px solid #ccc;border-radius:8px;cursor:crosshair;touch-action:none;width:100%;height:100px;display:block}
+.modal-footer{padding:14px 20px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#1a3c5e;letter-spacing:.5px;padding:4px 0;border-bottom:1px solid #e0e0e0;margin-top:4px}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:2rem">⚒️</div>
+  <h1>Chambre de Métiers de Dabou</h1>
+  <p>Annuaire Officiel des Artisans · République de Côte d'Ivoire · Région des Grands Ponts</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="n" id="s-total">0</div><div class="l">Artisans</div></div>
+  <div class="stat"><div class="n" id="s-metiers">0</div><div class="l">Métiers</div></div>
+  <div class="stat"><div class="n" id="s-apprentis">0</div><div class="l">Apprentis totaux</div></div>
+  <div class="stat"><div class="n" id="s-actifs">0</div><div class="l">Actifs</div></div>
+</div>
+
+<div class="toolbar">
+  <input type="text" id="search" placeholder="🔍 Rechercher un artisan…" oninput="renderTable()"/>
+  <select id="filter-metier" onchange="renderTable()"><option value="">🔨 Tous les métiers</option></select>
+  <select id="filter-statut" onchange="renderTable()">
+    <option value="">● Tous statuts</option>
+    <option>Actif</option>
+    <option>Inactif</option>
+  </select>
+  <button class="btn btn-green" onclick="openModal()">➕ Ajouter un artisan</button>
+  <button class="btn btn-blue" onclick="exportCSV()">⬇️ Exporter CSV</button>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr>
+  <th>N°</th><th>📷 Photo</th><th>👤 Nom & Prénom</th>
+  <th>🪪 Immatriculation</th><th>🪪 N° CNI</th>
+  <th>🔨 Métier</th><th>🏭 Branche</th>
+  <th>🎓 Certification</th><th>👥 Apprentis</th>
+  <th>⚧ Sexe</th><th>📞 Téléphone</th><th>📍 Adresse</th>
+  <th>🗓️ Inscription</th><th>● Statut</th><th>✍️ Signature</th><th>⚙️ Actions</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal-bg">
+<div class="modal">
+  <div class="modal-header">
+    <h2 id="modal-title">➕ Ajouter un artisan</h2>
+    <button class="close-btn" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label>📷 Photo</label>
+      <div class="photo-upload" onclick="document.getElementById('photo-input').click()">
+        <div id="photo-preview">📷 Appuyer pour choisir une photo</div>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="previewPhoto(event)"/>
+    </div>
+
+    <div class="section-title">👤 Identité</div>
+    <div class="form-row">
+      <div class="form-group"><label>Nom & Prénom *</label><input type="text" id="f-nom" placeholder="Ex: Kouassi Jean"/></div>
+      <div class="form-group"><label>Sexe</label>
+        <select id="f-sexe"><option value="">-- Choisir --</option><option>Masculin</option><option>Féminin</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>🪪 N° Immatriculation</label><input type="text" id="f-immat" placeholder="CM-DAB-2024-001"/></div>
+      <div class="form-group"><label>🪪 N° CNI</label><input type="text" id="f-cni" placeholder="CI0012345678"/></div>
+    </div>
+
+    <div class="section-title">🔨 Activité professionnelle</div>
+    <div class="form-row">
+      <div class="form-group"><label>Métier *</label><input type="text" id="f-metier" placeholder="Ex: Coiffeur"/></div>
+      <div class="form-group"><label>Branche d'activité</label><input type="text" id="f-branche" placeholder="Ex: Services"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>🎓 Certification / Diplôme</label><input type="text" id="f-certif" placeholder="Ex: CAP Coiffure, BT…"/></div>
+      <div class="form-group"><label>👥 Nombre d'apprentis</label><input type="number" id="f-apprentis" placeholder="0" min="0"/></div>
+    </div>
+
+    <div class="section-title">📞 Contact & Localisation</div>
+    <div class="form-row">
+      <div class="form-group"><label>Téléphone *</label><input type="tel" id="f-tel" placeholder="Ex: 0700000000"/></div>
+      <div class="form-group"><label>Adresse / Domicile</label><input type="text" id="f-adresse" placeholder="Ex: Dabou Centre"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>🗓️ Date d'inscription</label><input type="date" id="f-date"/></div>
+      <div class="form-group"><label>● Statut</label>
+        <select id="f-statut"><option>Actif</option><option>Inactif</option></select>
+      </div>
+    </div>
+
+    <div class="section-title">✍️ Signature</div>
+    <canvas id="sig-canvas" width="540" height="100"></canvas>
+    <button class="btn" style="background:#eee;color:#333;font-size:.8rem;width:fit-content" onclick="clearSig()">🗑️ Effacer la signature</button>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" style="background:#eee;color:#333" onclick="closeModal()">Annuler</button>
+    <button class="btn btn-green" onclick="saveArtisan()">💾 Enregistrer</button>
+  </div>
+</div>
+</div>
+
+<script>
+let artisans = JSON.parse(localStorage.getItem('artisans')||'[]');
+let editId = null;
+let photoData = null;
+
+// Signature
+const canvas = document.getElementById('sig-canvas');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+ctx.strokeStyle='#1a3c5e'; ctx.lineWidth=2; ctx.lineCap='round';
+
+function pos(e){
+  const r=canvas.getBoundingClientRect();
+  const scaleX=canvas.width/r.width, scaleY=canvas.height/r.height;
+  const src=e.touches?e.touches[0]:e;
+  return {x:(src.clientX-r.left)*scaleX, y:(src.clientY-r.top)*scaleY};
+}
+canvas.addEventListener('mousedown',e=>{drawing=true;ctx.beginPath();const p=pos(e);ctx.moveTo(p.x,p.y)});
+canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
+canvas.addEventListener('mouseup',()=>drawing=false);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;ctx.beginPath();const p=pos(e);ctx.moveTo(p.x,p.y)},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke()},{passive:false});
+canvas.addEventListener('touchend',()=>drawing=false);
+function clearSig(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+function getSig(){
+  const d=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  return d.some(v=>v!==0)?canvas.toDataURL():'';
+}
+
+function previewPhoto(e){
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    photoData=ev.target.result;
+    document.getElementById('photo-preview').innerHTML='<img src="'+photoData+'" style="max-height:80px;border-radius:8px"/>';
+  };
+  r.readAsDataURL(f);
+}
+
+function openModal(id=null){
+  editId=id; photoData=null;
+  document.getElementById('modal-title').textContent=id?'✏️ Modifier l\\'artisan':'➕ Ajouter un artisan';
+  clearSig();
+  ['nom','immat','cni','metier','branche','certif','tel','adresse'].forEach(k=>document.getElementById('f-'+k).value='');
+  document.getElementById('f-sexe').value='';
+  document.getElementById('f-statut').value='Actif';
+  document.getElementById('f-apprentis').value='';
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('photo-preview').innerHTML='📷 Appuyer pour choisir une photo';
+  document.getElementById('photo-input').value='';
+  if(id!==null){
+    const a=artisans.find(x=>x.id===id);
+    if(a){
+      document.getElementById('f-nom').value=a.nom||'';
+      document.getElementById('f-immat').value=a.immat||'';
+      document.getElementById('f-cni').value=a.cni||'';
+      document.getElementById('f-metier').value=a.metier||'';
+      document.getElementById('f-branche').value=a.branche||'';
+      document.getElementById('f-certif').value=a.certif||'';
+      document.getElementById('f-apprentis').value=a.apprentis||'';
+      document.getElementById('f-sexe').value=a.sexe||'';
+      document.getElementById('f-tel').value=a.tel||'';
+      document.getElementById('f-adresse').value=a.adresse||'';
+      document.getElementById('f-date').value=a.date||'';
+      document.getElementById('f-statut').value=a.statut||'Actif';
+      if(a.photo){photoData=a.photo;document.getElementById('photo-preview').innerHTML='<img src="'+a.photo+'" style="max-height:80px;border-radius:8px"/>';}
+      if(a.sig){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0);img.src=a.sig;}
+    }
+  }
+  document.getElementById('modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open')}
+
+function saveArtisan(){
+  const nom=document.getElementById('f-nom').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+  if(!nom){alert('Le nom est obligatoire.');return;}
+  if(!tel){alert('Le téléphone est obligatoire.');return;}
+  const a={
+    id:editId!==null?editId:Date.now(),
+    nom, immat:document.getElementById('f-immat').value.trim(),
+    cni:document.getElementById('f-cni').value.trim(),
+    metier:document.getElementById('f-metier').value.trim(),
+    branche:document.getElementById('f-branche').value.trim(),
+    certif:document.getElementById('f-certif').value.trim(),
+    apprentis:parseInt(document.getElementById('f-apprentis').value)||0,
+    sexe:document.getElementById('f-sexe').value,
+    tel, adresse:document.getElementById('f-adresse').value.trim(),
+    date:document.getElementById('f-date').value,
+    statut:document.getElementById('f-statut').value,
+    photo:photoData||'',
+    sig:getSig()
+  };
+  if(editId!==null){
+    const i=artisans.findIndex(x=>x.id===editId);
+    if(i>-1)artisans[i]=a;
+  }else{
+    artisans.push(a);
+  }
+  localStorage.setItem('artisans',JSON.stringify(artisans));
+  closeModal(); renderTable();
+}
+
+function deleteArtisan(id){
+  if(!confirm('Supprimer cet artisan ?'))return;
+  artisans=artisans.filter(x=>x.id!==id);
+  localStorage.setItem('artisans',JSON.stringify(artisans));
+  renderTable();
+}
+
+function renderTable(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const fm=document.getElementById('filter-metier').value;
+  const fs=document.getElementById('filter-statut').value;
+  let filtered=artisans.filter(a=>{
+    const matchQ=!q||[a.nom,a.metier,a.immat,a.cni,a.tel,a.adresse,a.certif].some(v=>(v||'').toLowerCase().includes(q));
+    const matchM=!fm||a.metier===fm;
+    const matchS=!fs||a.statut===fs;
+    return matchQ&&matchM&&matchS;
+  });
+  const tbody=document.getElementById('tbody');
+  if(!filtered.length){
+    tbody.innerHTML='<tr class="empty-row"><td colspan="16">Aucun artisan trouvé</td></tr>';
+  }else{
+    tbody.innerHTML=filtered.map((a,i)=>\`
+    <tr>
+      <td>\${i+1}</td>
+      <td>\${a.photo?'<img src="'+a.photo+'" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #2d6a4f">':'<div class="no-photo">👤</div>'}</td>
+      <td><strong>\${a.nom}</strong></td>
+      <td><code>\${a.immat||'—'}</code></td>
+      <td><code>\${a.cni||'—'}</code></td>
+      <td>\${a.metier||'—'}</td>
+      <td>\${a.branche||'—'}</td>
+      <td>\${a.certif||'—'}</td>
+      <td style="text-align:center">\${a.apprentis||0}</td>
+      <td>\${a.sexe||'—'}</td>
+      <td>\${a.tel?'<a class="btn-call" href="tel:'+a.tel+'">📞 Appeler</a>':'—'}</td>
+      <td>\${a.adresse||'—'}</td>
+      <td>\${a.date||'—'}</td>
+      <td><span class="badge \${a.statut==='Actif'?'badge-actif':'badge-inactif'}">\${a.statut||'—'}</span></td>
+      <td>\${a.sig?'<img src="'+a.sig+'" style="height:32px;border:1px solid #ccc;border-radius:4px">':'—'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-blue" style="padding:5px 10px;font-size:.75rem" onclick="openModal(\${a.id})">✏️</button>
+        <button class="btn btn-red" style="padding:5px 10px;font-size:.75rem" onclick="deleteArtisan(\${a.id})">🗑️</button>
+      </td>
+    </tr>\`).join('');
+  }
+  // Stats
+  document.getElementById('s-total').textContent=artisans.length;
+  const metiers=[...new Set(artisans.map(a=>a.metier).filter(Boolean))];
+  document.getElementById('s-metiers').textContent=metiers.length;
+  document.getElementById('s-apprentis').textContent=artisans.reduce((s,a)=>s+(a.apprentis||0),0);
+  document.getElementById('s-actifs').textContent=artisans.filter(a=>a.statut==='Actif').length;
+  // Filter metier
+  const sel=document.getElementById('filter-metier');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">🔨 Tous les métiers</option>'+metiers.map(m=>'<option'+(m===cur?' selected':'')+'>'+m+'</option>').join('');
+}
+
+function exportCSV(){
+  const headers=['N°','Nom','Immatriculation','CNI','Métier','Branche','Certification','Apprentis','Sexe','Téléphone','Adresse','Date inscription','Statut'];
+  const rows=artisans.map((a,i)=>[i+1,a.nom,a.immat,a.cni,a.metier,a.branche,a.certif,a.apprentis,a.sexe,a.tel,a.adresse,a.date,a.statut]);
+  const csv=[headers,...rows].map(r=>r.map(v=>'"'+(v||'')+'"').join(',')).join('\\n');
+  const blob=new Blob(['\\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='artisans_dabou.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+renderTable();
+<\/script>
+</body>
+</html>`;
+
+export default function App() {
+  const [downloaded, setDownloaded] = useState(false);
+
+  const handleDownload = () => {
+    const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Chambre_Metiers_Dabou.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 3000);
+  };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#f0f2f5", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Segoe UI', sans-serif" }}>
+      <div style={{ background: "#fff", borderRadius: 16, boxShadow: "0 8px 30px rgba(0,0,0,.12)", padding: "40px 36px", maxWidth: 420, width: "100%", textAlign: "center" }}>
+        <div style={{ fontSize: "3rem", marginBottom: 8 }}>⚒️</div>
+        <h1 style={{ color: "#1a3c5e", fontSize: "1.2rem", marginBottom: 4 }}>Chambre de Métiers de Dabou</h1>
+        <p style={{ color: "#666", fontSize: ".85rem", marginBottom: 28 }}>Annuaire Officiel des Artisans · Côte d'Ivoire</p>
+
+        <div style={{ background: "#f8f9fa", borderRadius: 10, padding: "16px 18px", textAlign: "left", marginBottom: 24, fontSize: ".82rem", color: "#444", lineHeight: 1.9 }}>
+          <strong style={{ color: "#1a3c5e", display: "block", marginBottom: 8 }}>✅ Fonctionnalités incluses :</strong>
+          🪪 Immatriculation & N° CNI<br/>
+          🎓 Certification / Diplôme<br/>
+          👥 Nombre d'apprentis<br/>
+          📞 Appel direct depuis l'app<br/>
+          🔍 Recherche + filtres métier/statut<br/>
+          🗓️ Date d'inscription & statut Actif/Inactif<br/>
+          ✍️ Signature manuscrite<br/>
+          📷 Photo de l'artisan<br/>
+          📊 Statistiques en temps réel<br/>
+          ⬇️ Export CSV<br/>
+          💾 Sauvegarde locale (fonctionne offline)
+        </div>
+
+        <button
+          onClick={handleDownload}
+          style={{
+            background: downloaded ? "#27ae60" : "linear-gradient(135deg,#1a3c5e,#2d6a4f)",
+            color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px",
+            fontSize: "1rem", fontWeight: 700, cursor: "pointer", width: "100%",
+            transition: "all .3s", display: "flex", alignItems: "center", justifyContent: "center", gap: 10
+          }}
+        >
+          {downloaded ? "✅ Téléchargé !" : "⬇️ Télécharger le fichier HTML"}
+        </button>
+
+        <p style={{ color: "#aaa", fontSize: ".75rem", marginTop: 14 }}>
+          Ouvre le fichier directement dans ton navigateur — aucune installation requise.
+        </p>
+      </div>
+    </div>
+  );
+}

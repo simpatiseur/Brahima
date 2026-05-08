@@ -23,6 +23,8 @@ header p{font-size:.8rem;opacity:.85}
 .btn-blue{background:#1a3c5e;color:#fff}
 .btn-red{background:#c0392b;color:#fff}
 .btn-yellow{background:#e67e22;color:#fff}
+.btn-wa{background:#25D366;color:#fff}
+.btn-print{background:#6c3483;color:#fff}
 .btn:active{opacity:.85}
 .table-wrap{overflow-x:auto;padding:0 14px 80px;max-width:900px;margin:0 auto}
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);font-size:.8rem}
@@ -38,7 +40,7 @@ tr:hover td{background:#f5f8ff}
 .photo-cell .no-photo{width:38px;height:38px;border-radius:50%;background:#dde3ea;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
 .sig-cell img{height:32px;max-width:80px;object-fit:contain}
 .empty-row td{text-align:center;padding:30px;color:#999;font-style:italic}
-/* Modal */
+/* Modal formulaire */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;overflow-y:auto;padding:20px 10px}
 .modal-bg.open{display:flex;align-items:flex-start;justify-content:center}
 .modal{background:#fff;border-radius:16px;width:100%;max-width:520px;padding:22px 18px;box-shadow:0 8px 40px rgba(0,0,0,.2)}
@@ -46,14 +48,43 @@ tr:hover td{background:#f5f8ff}
 .section-title{font-size:.78rem;font-weight:700;color:#2e7d52;text-transform:uppercase;margin:14px 0 8px;letter-spacing:.5px}
 .field{margin-bottom:10px}
 .field label{display:block;font-size:.78rem;font-weight:600;color:#444;margin-bottom:4px}
-.field input,.field select,.field textarea{width:100%;padding:9px 11px;border:1.5px solid #dde3ea;border-radius:8px;font-size:.85rem;outline:none;background:#fff}
+.field input,.field select{width:100%;padding:9px 11px;border:1.5px solid #dde3ea;border-radius:8px;font-size:.85rem;outline:none;background:#fff}
 .field input:focus,.field select:focus{border-color:#2e7d52}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .photo-upload{border:2px dashed #dde3ea;border-radius:10px;padding:14px;text-align:center;cursor:pointer;font-size:.82rem;color:#888;min-height:70px;display:flex;align-items:center;justify-content:center}
 .photo-upload img{max-height:80px;border-radius:8px;object-fit:cover}
 #sig-canvas{border:1.5px solid #dde3ea;border-radius:8px;width:100%;height:90px;touch-action:none;cursor:crosshair;background:#fafcff}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;border-top:1px solid #eef1f5;padding-top:14px}
+/* Fiche détaillée */
+.fiche-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;overflow-y:auto;padding:20px 10px}
+.fiche-bg.open{display:flex;align-items:flex-start;justify-content:center}
+.fiche{background:#fff;border-radius:16px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.fiche-header{background:linear-gradient(135deg,#1a3c5e,#2e7d52);color:#fff;padding:24px 20px;text-align:center;position:relative}
+.fiche-header .close-fiche{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:50%;width:30px;height:30px;font-size:1rem;cursor:pointer}
+.fiche-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #fff;margin-bottom:10px}
+.fiche-no-photo{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 10px}
+.fiche-nom{font-size:1.2rem;font-weight:700}
+.fiche-metier{font-size:.85rem;opacity:.9;margin-top:3px}
+.fiche-body{padding:18px}
+.fiche-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:.85rem}
+.fiche-row:last-child{border-bottom:none}
+.fiche-row .lbl{color:#888;font-size:.75rem;font-weight:600;text-transform:uppercase}
+.fiche-row .val{font-weight:600;color:#1a2e4a;text-align:right}
+.fiche-sig{text-align:center;padding:10px 0}
+.fiche-sig img{max-height:50px;max-width:180px}
+.fiche-actions{display:flex;gap:8px;padding:14px 18px;border-top:1px solid #eef1f5;flex-wrap:wrap}
+.fiche-actions .btn{flex:1;justify-content:center;font-size:.82rem}
+/* FAB */
 .fab{position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;background:#2e7d52;color:#fff;font-size:1.6rem;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(46,125,82,.4);display:flex;align-items:center;justify-content:center;z-index:100}
+/* Print */
+@media print{
+  header,footer,.toolbar,.fab,.fiche-bg,.modal-bg{display:none!important}
+  body{background:#fff}
+  .table-wrap{padding:0;overflow:visible}
+  table{box-shadow:none;font-size:.7rem}
+  .btn{display:none!important}
+  td a{color:#000;text-decoration:none}
+}
 </style>
 </head>
 <body>
@@ -81,16 +112,15 @@ tr:hover td{background:#f5f8ff}
   </select>
   <button class="btn btn-green" onclick="openModal()">➕ Ajouter</button>
   <button class="btn btn-blue" onclick="exportCSV()">⬇️ CSV</button>
+  <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer</button>
 </div>
 
 <div class="table-wrap">
   <table>
     <thead>
       <tr>
-        <th>N°</th><th>📷</th><th>Nom & Prénom</th><th>Immat.</th><th>CNI</th>
-        <th>Métier</th><th>Branche</th><th>Certif.</th><th>Appr.</th>
-        <th>Sexe</th><th>Téléphone</th><th>Adresse</th><th>Inscription</th>
-        <th>Statut</th><th>Signature</th><th>Actions</th>
+        <th>N°</th><th>📷</th><th>Nom & Prénom</th><th>Métier</th>
+        <th>Téléphone</th><th>Statut</th><th>Actions</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -99,7 +129,21 @@ tr:hover td{background:#f5f8ff}
 
 <button class="fab" onclick="openModal()">＋</button>
 
-<!-- MODAL -->
+<!-- FICHE DÉTAILLÉE -->
+<div class="fiche-bg" id="fiche-bg">
+  <div class="fiche" id="fiche-content">
+    <div class="fiche-header">
+      <button class="close-fiche" onclick="closeFiche()">✕</button>
+      <div id="fiche-photo-wrap"></div>
+      <div class="fiche-nom" id="fiche-nom"></div>
+      <div class="fiche-metier" id="fiche-metier-head"></div>
+    </div>
+    <div class="fiche-body" id="fiche-body"></div>
+    <div class="fiche-actions" id="fiche-actions"></div>
+  </div>
+</div>
+
+<!-- MODAL FORMULAIRE -->
 <div class="modal-bg" id="modal-bg">
   <div class="modal">
     <h2 id="modal-title">➕ Ajouter un artisan</h2>
@@ -123,7 +167,7 @@ tr:hover td{background:#f5f8ff}
     <div class="section-title">🔨 Activité</div>
     <div class="row2">
       <div class="field"><label>Métier *</label><input id="f-metier" type="text" placeholder="Ex: Menuisier"/></div>
-      <div class="field"><label>Branche</label><input id="f-branche" type="text" placeholder="Ex: Bois"/></div>
+      <div class="field"><label>Branche</label><input id="f-branche" type="text"/></div>
     </div>
     <div class="row2">
       <div class="field"><label>Certification/Diplôme</label><input id="f-certif" type="text"/></div>
@@ -183,6 +227,38 @@ function previewPhoto(e){
   r.onload=ev=>{photoData=ev.target.result;document.getElementById('photo-preview').innerHTML='<img src="'+photoData+'" style="max-height:80px;border-radius:8px"/>';};
   r.readAsDataURL(f);
 }
+
+// Fiche détaillée
+function openFiche(id){
+  const a=artisans.find(x=>x.id===id); if(!a)return;
+  document.getElementById('fiche-photo-wrap').innerHTML=a.photo
+    ?`<img class="fiche-photo" src="${a.photo}"/>`
+    :`<div class="fiche-no-photo">👤</div>`;
+  document.getElementById('fiche-nom').textContent=a.nom;
+  document.getElementById('fiche-metier-head').textContent=(a.metier||'')+(a.branche?' · '+a.branche:'');
+  const rows=[
+    ['🪪 Immatriculation', a.immat||'—'],
+    ['🪪 N° CNI', a.cni||'—'],
+    ['🎓 Certification', a.certif||'—'],
+    ['👥 Apprentis', a.apprentis||0],
+    ['⚧ Sexe', a.sexe||'—'],
+    ['📍 Adresse', a.adresse||'—'],
+    ['🗓️ Inscription', a.date||'—'],
+    ['● Statut', a.statut||'—'],
+  ];
+  let bodyHTML=rows.map(([l,v])=>`<div class="fiche-row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('');
+  if(a.sig) bodyHTML+=`<div class="fiche-sig"><div style="font-size:.72rem;color:#999;margin-bottom:4px">✍️ SIGNATURE</div><img src="${a.sig}"/></div>`;
+  document.getElementById('fiche-body').innerHTML=bodyHTML;
+
+  const tel=a.tel?a.tel.replace(/\s/g,''):'';
+  document.getElementById('fiche-actions').innerHTML=`
+    ${tel?`<a href="tel:${tel}" class="btn btn-green" style="text-decoration:none;flex:1;justify-content:center">📞 Appeler</a>`:''}
+    ${tel?`<a href="https://wa.me/225${tel.replace(/^0/,'')}" target="_blank" class="btn btn-wa" style="text-decoration:none;flex:1;justify-content:center">💬 WhatsApp</a>`:''}
+    <button class="btn btn-yellow" style="flex:1;justify-content:center" onclick="closeFiche();openModal(${a.id})">✏️ Modifier</button>
+  `;
+  document.getElementById('fiche-bg').classList.add('open');
+}
+function closeFiche(){document.getElementById('fiche-bg').classList.remove('open')}
 
 function openModal(id=null){
   editId=id; photoData=null;
@@ -253,23 +329,19 @@ function renderTable(){
   });
   const tbody=document.getElementById('tbody');
   if(!filtered.length){
-    tbody.innerHTML='<tr class="empty-row"><td colspan="16">Aucun artisan trouvé</td></tr>';
+    tbody.innerHTML='<tr class="empty-row"><td colspan="7">Aucun artisan trouvé</td></tr>';
   } else {
     tbody.innerHTML=filtered.map((a,i)=>`<tr>
       <td>${i+1}</td>
       <td class="photo-cell">${a.photo?`<img src="${a.photo}"/>`:'<div class="no-photo">👤</div>'}</td>
-      <td><strong>${a.nom}</strong></td>
-      <td>${a.immat||'—'}</td><td>${a.cni||'—'}</td>
-      <td>${a.metier||'—'}</td><td>${a.branche||'—'}</td>
-      <td>${a.certif||'—'}</td><td>${a.apprentis||0}</td>
-      <td>${a.sexe||'—'}</td>
-      <td>${a.tel?`<a href="tel:${a.tel}">📞 ${a.tel}</a>`:'—'}</td>
-      <td>${a.adresse||'—'}</td><td>${a.date||'—'}</td>
+      <td><strong style="cursor:pointer;color:#1a3c5e" onclick="openFiche(${a.id})">${a.nom}</strong></td>
+      <td>${a.metier||'—'}</td>
+      <td>${a.tel?`<a href="tel:${a.tel}" style="color:#2e7d52;font-weight:600;text-decoration:none">📞 ${a.tel}</a>`:'—'}</td>
       <td><span class="badge badge-${(a.statut||'Actif').toLowerCase()}">${a.statut||'Actif'}</span></td>
-      <td class="sig-cell">${a.sig?`<img src="${a.sig}"/>`:'—'}</td>
       <td style="white-space:nowrap">
+        <button class="btn btn-blue" style="padding:5px 9px;font-size:.75rem" onclick="openFiche(${a.id})">👁️</button>
         <button class="btn btn-yellow" style="padding:5px 9px;font-size:.75rem" onclick="openModal(${a.id})">✏️</button>
-        <button class="btn btn-red" style="padding:5px 9px;font-size:.75rem;margin-left:4px" onclick="deleteArtisan(${a.id})">🗑️</button>
+        <button class="btn btn-red" style="padding:5px 9px;font-size:.75rem" onclick="deleteArtisan(${a.id})">🗑️</button>
       </td>
     </tr>`).join('');
   }
@@ -293,10 +365,10 @@ function exportCSV(){
   URL.revokeObjectURL(url);
 }
 
-// Fermer modal si clic sur fond
 document.getElementById('modal-bg').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('fiche-bg').addEventListener('click',function(e){if(e.target===this)closeFiche();});
 
 renderTable();
 </script>
 </body>
-</html>
+  </html>
